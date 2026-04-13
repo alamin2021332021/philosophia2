@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Philosophia — The Living Oracle</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600&family=Crimson+Pro:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0d0b07;
+    --parchment: #f5ede0;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --gold-dim: #7a6230;
+    --rust: #8b3a2a;
+    --cream: #faf6ee;
+  }
+
+  body {
+    background: var(--ink);
+    color: var(--parchment);
+    font-family: 'Cormorant Garamond', serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, #1a1408 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .stars {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--gold-light);
+    animation: twinkle var(--dur, 4s) ease-in-out infinite var(--delay, 0s);
+    opacity: 0;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0; transform: scale(0.8); }
+    50% { opacity: var(--bright, 0.4); transform: scale(1.2); }
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  header {
+    text-align: center;
+    padding: 60px 0 40px;
+  }
+
+  header::after {
+    content: '';
+    display: block;
+    width: 200px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 28px auto 0;
+  }
+
+  .eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    animation: fadeIn 1s ease forwards;
+    opacity: 0;
+  }
+
+  .title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(36px, 8vw, 72px);
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1;
+    letter-spacing: 2px;
+    animation: fadeInUp 1s ease 0.2s forwards;
+    opacity: 0;
+    text-shadow: 0 0 60px rgba(201,168,76,0.3);
+  }
+
+  .subtitle {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: rgba(245,237,224,0.5);
+    margin-top: 10px;
+    animation: fadeIn 1s ease 0.6s forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeIn { to { opacity: 1; } }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .pillars {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin: 40px 0 32px;
+    animation: fadeIn 1s ease 0.8s forwards;
+    opacity: 0;
+  }
+
+  .pillar {
+    background: transparent;
+    border: 1px solid var(--gold-dim);
+    color: var(--gold-light);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pillar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gold);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: -1;
+  }
+
+  .pillar:hover { color: var(--ink); border-color: var(--gold); }
+  .pillar:hover::before { transform: translateX(0); }
+  .pillar.active { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+
+  .oracle-box {
+    position: relative;
+    margin: 0 0 32px;
+    animation: fadeInUp 1s ease 1s forwards;
+    opacity: 0;
+  }
+
+  .oracle-label {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .oracle-input-wrap {
+    display: flex;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  textarea {
+    flex: 1;
+    background: rgba(245,237,224,0.04);
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--parchment);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    padding: 16px 20px;
+    resize: none;
+    min-height: 80px;
+    outline: none;
+    transition: border-color 0.3s;
+    line-height: 1.5;
+  }
+
+  textarea::placeholder { color: rgba(245,237,224,0.25); font-style: italic; }
+  textarea:focus { border-color: var(--gold); background: rgba(245,237,224,0.06); }
+
+  .ask-btn {
+    background: var(--gold);
+    border: none;
+    color: var(--ink);
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 0 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 100px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ask-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gold-light);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  .ask-btn:hover::before { transform: scaleX(1); }
+  .ask-btn:hover { box-shadow: 0 0 30px rgba(201,168,76,0.4); }
+  .ask-btn span { position: relative; z-index: 1; }
+  .ask-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 28px;
+    align-items: center;
+  }
+
+  .suggestion {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: rgba(201,168,76,0.6);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px 0;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: transparent;
+    transition: all 0.2s;
+  }
+
+  .suggestion:hover {
+    color: var(--gold);
+    text-decoration-color: rgba(201,168,76,0.4);
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 0 0 32px;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.4), transparent);
+  }
+
+  .divider-symbol {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    color: var(--gold-dim);
+  }
+
+  .response-card {
+    background: rgba(245,237,224,0.03);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-top: 2px solid var(--gold-dim);
+    padding: 40px 44px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .response-card::before {
+    content: '"';
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    font-size: 100px;
+    font-family: 'Cormorant Garamond', serif;
+    color: rgba(201,168,76,0.06);
+    line-height: 1;
+  }
+
+  .response-question {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .response-text {
+    font-size: 20px;
+    line-height: 1.85;
+    color: var(--cream);
+    font-weight: 300;
+    white-space: pre-wrap;
+  }
+
+  .response-text em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 2px;
+    height: 20px;
+    background: var(--gold);
+    animation: blink 1s step-end infinite;
+    vertical-align: middle;
+    margin-left: 2px;
+  }
+
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .response-footer {
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(201,168,76,0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .explore-more {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: rgba(245,237,224,0.4);
+  }
+
+  .follow-up-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .follow-up-btn {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--gold-dim);
+    background: transparent;
+    border: 1px solid rgba(201,168,76,0.2);
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .follow-up-btn:hover {
+    color: var(--gold);
+    border-color: var(--gold-dim);
+    background: rgba(201,168,76,0.05);
+  }
+
+  .history { margin-top: 48px; }
+
+  .history-label {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(201,168,76,0.3);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .history-item {
+    border-left: 1px solid rgba(201,168,76,0.2);
+    padding: 12px 20px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .history-item:hover {
+    border-left-color: var(--gold-dim);
+    background: rgba(245,237,224,0.02);
+  }
+
+  .history-q {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    color: rgba(201,168,76,0.5);
+    margin-bottom: 4px;
+  }
+
+  .history-preview {
+    font-size: 14px;
+    color: rgba(245,237,224,0.3);
+    font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .flame-wrap {
+    text-align: center;
+    padding: 48px 0;
+  }
+
+  .flame {
+    font-size: 40px;
+    animation: flicker 0.3s ease-in-out infinite alternate;
+    display: inline-block;
+  }
+
+  .flame-text {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: rgba(201,168,76,0.5);
+    margin-top: 16px;
+  }
+
+  @keyframes flicker {
+    from { transform: scale(1) rotate(-1deg); }
+    to { transform: scale(1.05) rotate(1deg); }
+  }
+
+  .error-box {
+    border: 1px solid var(--rust);
+    padding: 20px 24px;
+    color: #d4896d;
+    font-style: italic;
+    font-size: 16px;
+  }
+
+  @media (max-width: 600px) {
+    .response-card { padding: 28px 24px; }
+    .oracle-input-wrap { flex-direction: column; }
+    .ask-btn { min-height: 50px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="container">
+  <header>
+    <p class="eyebrow">The Living Oracle of Ideas</p>
+    <h1 class="title">Philosophia</h1>
+    <p class="subtitle">Wisdom has waited millennia for your question.</p>
+  </header>
+
+  <div class="pillars" id="pillars">
+    <button class="pillar active" data-topic="all">All Branches</button>
+    <button class="pillar" data-topic="metaphysics">Metaphysics</button>
+    <button class="pillar" data-topic="ethics">Ethics</button>
+    <button class="pillar" data-topic="epistemology">Epistemology</button>
+    <button class="pillar" data-topic="existentialism">Existentialism</button>
+    <button class="pillar" data-topic="logic">Logic</button>
+    <button class="pillar" data-topic="political">Political</button>
+    <button class="pillar" data-topic="eastern">Eastern</button>
+  </div>
+
+  <div class="oracle-box">
+    <span class="oracle-label">Pose Your Question to the Oracle</span>
+    <div class="oracle-input-wrap">
+      <textarea id="questionInput" placeholder="What is the meaning of existence? Why should I be moral? What can I truly know?..." rows="3"></textarea>
+      <button class="ask-btn" id="askBtn" onclick="askOracle()">
+        <span>Illuminate</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="suggestions" id="suggestions">
+    <span style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:rgba(201,168,76,0.3);text-transform:uppercase;">Spark →</span>
+    <button class="suggestion" onclick="askQuestion(this.textContent)">What is the self?</button>
+    <button class="suggestion" onclick="askQuestion(this.textContent)">Does free will exist?</button>
+    <button class="suggestion" onclick="askQuestion(this.textContent)">Why is there something rather than nothing?</button>
+    <button class="suggestion" onclick="askQuestion(this.textContent)">What makes an action moral?</button>
+    <button class="suggestion" onclick="askQuestion(this.textContent)">Is reality an illusion?</button>
+  </div>
+
+  <div id="responseArea"></div>
+  <div id="historyArea"></div>
+</div>
+
+<script>
+  // ============================================
+  // PASTE YOUR GEMINI API KEY BELOW
+  // Replace YOUR_API_KEY_HERE with your real key
+  // ============================================
+  const GEMINI_API_KEY = "YOUR_API_KEY_HERE";
+  // ============================================
+
+  const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+  // Generate stars
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2 + 0.5;
+    s.style.cssText = `
+      width:${size}px;height:${size}px;
+      left:${Math.random()*100}%;top:${Math.random()*100}%;
+      --dur:${3+Math.random()*5}s;--delay:${-Math.random()*8}s;
+      --bright:${0.2+Math.random()*0.5};
+    `;
+    starsEl.appendChild(s);
+  }
+
+  let currentTopic = 'all';
+  let conversationHistory = [];
+  let qaHistory = [];
+
+  document.getElementById('pillars').addEventListener('click', e => {
+    const btn = e.target.closest('.pillar');
+    if (!btn) return;
+    document.querySelectorAll('.pillar').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    currentTopic = btn.dataset.topic;
+    updateSuggestions(currentTopic);
+  });
+
+  const topicSuggestions = {
+    metaphysics: ["What is time?", "Does God exist?", "What is consciousness?", "Is matter fundamental?"],
+    ethics: ["Why be moral?", "What is justice?", "Is morality objective?", "What is virtue ethics?"],
+    epistemology: ["What can we truly know?", "What is the problem of induction?", "Explain Descartes' doubt"],
+    existentialism: ["What is authentic existence?", "Explain Sartre's bad faith", "What is the absurd?"],
+    logic: ["Explain the liar's paradox", "What are logical fallacies?", "What is deductive reasoning?"],
+    political: ["What is justice in society?", "Explain the social contract", "What is power?"],
+    eastern: ["Explain the Tao", "What is enlightenment in Buddhism?", "Explain Wu Wei"],
+    all: ["What is the self?", "Does free will exist?", "Why is there something rather than nothing?", "What makes an action moral?", "Is reality an illusion?"]
+  };
+
+  function updateSuggestions(topic) {
+    const s = document.getElementById('suggestions');
+    const suggs = topicSuggestions[topic] || topicSuggestions.all;
+    s.innerHTML = `<span style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:rgba(201,168,76,0.3);text-transform:uppercase;">Spark →</span>`
+      + suggs.slice(0,5).map(q => `<button class="suggestion" onclick="askQuestion('${q.replace(/'/g,"\\'")}')"> ${q}</button>`).join('');
+  }
+
+  function askQuestion(q) {
+    document.getElementById('questionInput').value = q;
+    askOracle();
+  }
+
+  document.getElementById('questionInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); askOracle(); }
+  });
+
+  async function askOracle() {
+    const input = document.getElementById('questionInput');
+    const q = input.value.trim();
+    if (!q) return;
+
+    if (GEMINI_API_KEY === "YOUR_API_KEY_HERE") {
+      document.getElementById('responseArea').innerHTML = `<div class="error-box">⚠️ Please open this file and replace YOUR_API_KEY_HERE with your real Gemini API key.</div>`;
+      return;
+    }
+
+    const btn = document.getElementById('askBtn');
+    btn.disabled = true;
+    input.value = '';
+
+    document.getElementById('responseArea').innerHTML = `
+      <div class="flame-wrap">
+        <div class="flame">🔥</div>
+        <p class="flame-text">The oracle contemplates your question…</p>
+      </div>`;
+
+    const topicContext = currentTopic !== 'all' ? ` Focus especially on the branch of ${currentTopic} philosophy.` : '';
+
+    const systemInstruction = `You are Philosophia — a breathtakingly brilliant philosophy teacher whose explanations make people gasp, exclaim, and feel their mind expand in real time. You are part ancient oracle, part passionate professor, part poet of ideas.
+
+Your sacred mission: Make philosophy feel ALIVE, URGENT, PERSONAL, and MIND-BENDING.
+
+Rules:
+1. Open with a hook that GRABS — a paradox, a vivid scenario, a provocative claim.
+2. Use concrete examples and thought experiments that make abstract ideas tangible.
+3. Reference key thinkers naturally like fascinating characters in a great drama.
+4. Build toward a revelation or twist that reframes the question.
+5. End by opening a door — posing a deeper question or connecting to the student's actual life.
+6. Tone: intellectually electric, never dry or textbook-like.
+7. Length: 250–400 words. Dense with insight, light in language.
+8. Use *italics* around key terms by wrapping them in asterisks like *this*.
+9. No bullet points. Pure flowing prose.${topicContext}`;
+
+    conversationHistory.push({ role: 'user', parts: [{ text: q }] });
+
+    try {
+      const response = await fetch(GEMINI_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: systemInstruction }] },
+          contents: conversationHistory,
+          generationConfig: { maxOutputTokens: 1000, temperature: 0.9 }
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.error) throw new Error(data.error.message);
+
+      const answer = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      conversationHistory.push({ role: 'model', parts: [{ text: answer }] });
+
+      document.getElementById('responseArea').innerHTML = `
+        <div class="divider">
+          <div class="divider-line"></div>
+          <span class="divider-symbol">✦</span>
+          <div class="divider-line"></div>
+        </div>
+        <div class="response-card">
+          <div class="response-question">${escHtml(q)}</div>
+          <div class="response-text" id="rText"></div>
+          <div class="response-footer">
+            <span class="explore-more">Where does this lead you?</span>
+            <div class="follow-up-btns" id="followBtns"></div>
+          </div>
+        </div>`;
+
+      await typeWrite('rText', answer);
+      generateFollowUps(q, answer);
+
+      qaHistory.unshift({ q, a: answer });
+      renderHistory();
+
+    } catch (err) {
+      document.getElementById('responseArea').innerHTML = `<div class="error-box">The oracle encountered a shadow: ${escHtml(err.message)}</div>`;
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function typeWrite(id, text) {
+    return new Promise(resolve => {
+      const el = document.getElementById(id);
+      const formatted = text.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+      let i = 0;
+      function next() {
+        if (i >= formatted.length) { el.innerHTML = formatted; resolve(); return; }
+        const chunk = Math.min(4, formatted.length - i);
+        el.innerHTML = formatted.slice(0, i + chunk) + '<span class="cursor"></span>';
+        i += chunk;
+        setTimeout(next, 10);
+      }
+      next();
+    });
+  }
+
+  async function generateFollowUps(q, a) {
+    try {
+      const r = await fetch(GEMINI_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: `Give exactly 3 short follow-up philosophy questions (under 8 words each) as a JSON array of strings. No other text. Q: ${q}` }] }],
+          generationConfig: { maxOutputTokens: 200, temperature: 0.7 }
+        })
+      });
+      const d = await r.json();
+      const raw = d.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
+      const qs = JSON.parse(raw.replace(/```json|```/g,'').trim());
+      const container = document.getElementById('followBtns');
+      if (container) {
+        container.innerHTML = qs.slice(0,3).map(fq =>
+          `<button class="follow-up-btn" onclick="askQuestion('${fq.replace(/'/g,"\\'")}')">→ ${fq}</button>`
+        ).join('');
+      }
+    } catch {}
+  }
+
+  function renderHistory() {
+    const area = document.getElementById('historyArea');
+    if (qaHistory.length < 2) { area.innerHTML = ''; return; }
+    area.innerHTML = `
+      <div class="history">
+        <div class="history-label">Previous Contemplations</div>
+        ${qaHistory.slice(1).map((item, i) => `
+          <div class="history-item" onclick="revisit(${i+1})">
+            <div class="history-q">${escHtml(item.q)}</div>
+            <div class="history-preview">${escHtml(item.a.slice(0,120))}…</div>
+          </div>`).join('')}
+      </div>`;
+  }
+
+  function revisit(idx) {
+    const item = qaHistory[idx];
+    document.getElementById('responseArea').innerHTML = `
+      <div class="divider">
+        <div class="divider-line"></div>
+        <span class="divider-symbol">✦</span>
+        <div class="divider-line"></div>
+      </div>
+      <div class="response-card">
+        <div class="response-question">${escHtml(item.q)}</div>
+        <div class="response-text">${item.a.replace(/\*([^*]+)\*/g,'<em>$1</em>')}</div>
+      </div>`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+</script>
+</body>
+</html>
